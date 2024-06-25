@@ -21,7 +21,7 @@ Start by cloning the repository to your local machine:
 
 ```git clone git@github.com:abhishekk-dev/r42-womens-wellness-chatbot.git```
 
-```cd womens-wellness-chatbot```
+```cd r42-womens-wellness-chatbot```
 
 Install Dependencies
 Use Poetry to install the project dependencies. This will create a virtual environment and install all required packages as specified in pyproject.toml and poetry.lock:
