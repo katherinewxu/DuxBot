@@ -18,8 +18,8 @@ Environment Setup
 
 Clone the Repository
 Start by cloning the repository to your local machine:
-```git clone https://github.com/your-username/womens-wellness-chatbot.git
-cd womens-wellness-chatbot```
+```git clone https://github.com/your-username/womens-wellness-chatbot.git```
+```cd womens-wellness-chatbot```
 
 Install Dependencies
 Use Poetry to install the project dependencies. This will create a virtual environment and install all required packages as specified in pyproject.toml and poetry.lock:
@@ -27,8 +27,8 @@ Use Poetry to install the project dependencies. This will create a virtual envir
 
 Setup Environment Variables
 The application requires API keys from OpenAI and the Brave Search API. Create a .env file in the root of your project directory and add your API keys:
-```OPENAI_API_KEY=your_openai_api_key_here
-BRAVE_SEARCH_API_KEY=your_brave_search_api_key_here```
+```OPENAI_API_KEY=your_openai_api_key_here```
+```BRAVE_SEARCH_API_KEY=your_brave_search_api_key_here```
 Make sure the ```.env``` file is located correctly relative to your application's expected path for loading environment variables.
 
 Running the Application
