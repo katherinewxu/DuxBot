@@ -31,6 +31,7 @@ Setup Environment Variables
 The application requires API keys from OpenAI and the Brave Search API. Create a .env file in the root of your project directory and add your API keys:
 
 ```OPENAI_API_KEY=your_openai_api_key_here```
+
 ```BRAVE_SEARCH_API_KEY=your_brave_search_api_key_here```
 
 Make sure the ```.env``` file is located correctly relative to your application's expected path for loading environment variables.
