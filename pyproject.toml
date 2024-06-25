@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "womens-wellness-chatbot"
+version = "0.1.0"
+description = "Chatbot for women going through menopause"
+authors = ["Abhishek Koneru"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.36.0"
+langchain = "^0.2.6"
+openai = "^1.35.3"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+langchain-community = "^0.2.6"
+langchain-openai = "^0.1.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
