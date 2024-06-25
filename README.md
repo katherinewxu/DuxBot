@@ -1,4 +1,5 @@
-Women's Wellness Chatbot
+**Women's Wellness Chatbot**
+
 This repository contains the source code for a chatbot focused on women's wellness. The chatbot utilizes the OpenAI GPT models via LangChain and integrates a search feature using the Brave Search API to provide relevant information on various aspects of women's health and wellness.
 Features
 
