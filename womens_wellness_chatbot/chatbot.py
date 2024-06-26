@@ -29,7 +29,9 @@ def brave_search(query):
     
     if response.status_code == 200:
         results = response.json().get('web', {}).get('results', [])
-        return "\n".join([f"Title: {r['title']}\nURL: {r['url']}\nDescription: {r['description']}\n" for r in results])
+        summary = "\n".join([f"Title: {r['title']}\nURL: {r['url']}\nDescription: {r['description']}\n" for r in results])
+        urls = [r['url'] for r in results]
+        return {"summary": summary, "urls": urls}
     else:
         return f"Error: Unable to fetch results. Status code: {response.status_code}"
 
@@ -37,11 +39,26 @@ def brave_search(query):
 brave_search_tool = Tool(
     name="Brave Search",
     func=brave_search,
-    description="Useful for when you need to answer questions about current events or the current state of the world. Input should be a search query."
+    description="Useful for when you need to answer questions on topics ranging from reproductive health, menstrual cycles, and menopause to nutrition, fitness, and mental wellbeing. Returns a summary of search results and a list of URLs. Input should be a search query."
 )
 
 # Initialize ConversationBufferMemory
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+system_message = """You are an AI assistant specializing in women's health and wellness. 
+When answering questions, always use the Brave Search tool to find relevant information. 
+Summarize the search results and provide citations by including the URLs of your sources. 
+Format your response as follows:
+
+Summary of the answer based on search results.
+
+Sources:
+1. [Brief description of source 1](URL1)
+2. [Brief description of source 2](URL2)
+...
+
+Remember to always cite your sources and provide accurate, helpful information."""
+
 
 # Initialize the agent
 agent = initialize_agent(
@@ -49,7 +66,8 @@ agent = initialize_agent(
     llm,
     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
     memory=memory,
-    verbose=True
+    verbose=True,
+    agent_kwargs={"system_message": system_message}
 )
 
 # Streamlit UI
@@ -74,8 +92,17 @@ if prompt := st.chat_input("What would you like to know?"):
     # Generate response
     response = agent.run(prompt)
 
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        st.markdown(response)
+    # Check if "Sources:" is in the response
+    if "Sources:" in response:
+        # Split the response into summary and sources
+        summary, sources = response.split("Sources:", 1)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            st.markdown(summary.strip())
+            st.markdown("Sources:" + sources)
+    else:
+        # If no sources, display the entire response as summary
+        with st.chat_message("assistant"):
+            st.markdown(response)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
