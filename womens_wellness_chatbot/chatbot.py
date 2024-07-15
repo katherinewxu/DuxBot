@@ -19,7 +19,8 @@ load_dotenv()
 # Initialize ChatOpenAI
 llm = ChatOpenAI(
     model_name="gpt-4-turbo",
-    openai_api_key=os.getenv("OPENAI_API_KEY")
+    openai_api_key=os.getenv("OPENAI_API_KEY"),
+    max_tokens=4096
 )
 
 # Initialize ChatOpenAI with JSON mode for structured responses
@@ -168,14 +169,16 @@ system_message = """You are an AI assistant specializing in women's health and w
 Generate the response in the following format:
 
 "Summary of the answer based on search results. 
-Sources: 1. URL1 2. URL2"
+Sources: 
+1. URL1 
+2. URL2"
 
 Choose the appropriate tool(s) based on the nature of the question:
 - For general wellness queries, use Brave Search.
 - For specific medical or scientific questions, use PubMed Search.
 - For complex queries that may benefit from both general and scientific information, use both tools.
 
-Remember to always cite your sources and provide accurate, helpful information."""
+Remember to always include at least two sources and provide accurate, helpful information."""
 
 # Initialize the agent without specifying JSON output
 agent = initialize_agent(
