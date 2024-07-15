@@ -17,7 +17,7 @@ brave_search_key = st.secrets["BRAVE_SEARCH_API_KEY"]
 
 # Initialize ChatOpenAI
 llm = ChatOpenAI(
-    model_name="gpt-4-turbo",
+    model_name="gpt-4",
     openai_api_key=openai_key,
     max_tokens=4096
 )
