@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 import streamlit as st
 import requests
 from langchain.agents import AgentType, initialize_agent
@@ -13,20 +12,20 @@ from typing import Dict, Any
 import xml.etree.ElementTree as ET
 import json
 
-# Load environment variables
-load_dotenv()
+openai_key = st.secrets["OPENAI_API_KEY"]
+brave_search_key = st.secrets["BRAVE_SEARCH_API_KEY"]
 
 # Initialize ChatOpenAI
 llm = ChatOpenAI(
     model_name="gpt-4-turbo",
-    openai_api_key=os.getenv("OPENAI_API_KEY"),
+    openai_api_key=openai_key,
     max_tokens=4096
 )
 
 # Initialize ChatOpenAI with JSON mode for structured responses
 llm_json = ChatOpenAI(
     model_name="gpt-3.5-turbo",
-    openai_api_key=os.getenv("OPENAI_API_KEY"),
+    openai_api_key=openai_key,
     model_kwargs={"response_format": {"type": "json_object"}}
 )
 
@@ -35,7 +34,7 @@ def brave_search(query):
     url = "https://api.search.brave.com/res/v1/web/search"
     headers = {
         "Accept": "application/json",
-        "X-Subscription-Token": os.getenv("BRAVE_SEARCH_API_KEY")
+        "X-Subscription-Token": brave_search_key
     }
     params = {
         "q": query,
