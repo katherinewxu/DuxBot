@@ -17,9 +17,9 @@ brave_search_key = st.secrets["BRAVE_SEARCH_API_KEY"]
 
 # Initialize ChatOpenAI
 llm = ChatOpenAI(
-    model_name="gpt-4",
+    model_name="gpt-4-32k-0314",
     openai_api_key=openai_key,
-    max_tokens=4096
+    max_tokens=8192
 )
 
 # Initialize ChatOpenAI with JSON mode for structured responses
@@ -158,10 +158,22 @@ pubmed_search_tool = Tool(
     description="Useful for searching scientific and medical literature related to women's health, including reproductive health, menstrual cycles, menopause, and specific medical conditions. Returns a list of relevant papers with titles, abstracts, and URLs. Input should be a search query."
 )
 
+def generate_followup_questions(initial_response):
+    followup_prompt = f"""Based on the following initial response, generate 2 follow-up questions to gather more comprehensive information. Provide the output as a JSON object with a "questions" key containing an array of strings:
+
+    Initial response:
+    {initial_response}
+
+    Follow-up questions (in JSON format):"""
+
+    followup_response = llm_json.predict(followup_prompt)
+    return json.loads(followup_response)['questions'][:2]  # Limit to 2 questions
+
+
 # Initialize ConversationBufferMemory
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-system_message = """You are an AI assistant specializing in women's health and wellness. You have access to two search tools:
+system_message = """You are an AI assistant specializing in women's health and wellness. Provide detailed, comprehensive responses to queries, covering multiple aspects of the topic when relevant. You have access to two search tools:
 1. Brave Search: Use this for general questions about women's health, lifestyle, nutrition, fitness, and mental wellbeing.
 2. PubMed Search: Use this for more specific medical questions or when you need scientific literature on women's health topics.
  
@@ -176,6 +188,7 @@ Choose the appropriate tool(s) based on the nature of the question:
 - For general wellness queries, use Brave Search.
 - For specific medical or scientific questions, use PubMed Search.
 - For complex queries that may benefit from both general and scientific information, use both tools.
+- If one search doesn't yield any results, use the other one
 
 Remember to always include at least two sources and provide accurate, helpful information."""
 
@@ -208,21 +221,27 @@ if prompt := st.chat_input("What would you like to know about women's health and
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-
     # Call the agent with the correct input structure
-    response = agent.run(input=prompt)
+    initial_response = agent.run(input=prompt)
+    followup_questions = generate_followup_questions(initial_response)
 
-    # Check if "Sources:" is in the response
-    if "Sources:" in response:
-        # Split the response into summary and sources
-        summary, sources = response.split("Sources:", 1)
-        with st.chat_message("assistant"):
-            st.markdown(summary.strip())
-            st.markdown("Sources:" + sources)
-    else:
-        # If no sources, display the entire response as summary
-        with st.chat_message("assistant"):
-            st.markdown(response)
+    # Split the response into summary and sources
+    summary, sources = initial_response.split("Sources:", 1)
+    with st.chat_message("assistant"):
+        st.markdown(summary.strip())
+        st.markdown("Sources:\n" + sources)
+
+        for i, question in enumerate(followup_questions, 1):
+            st.markdown(question)
+            
+            # Call the agent to get the response
+            followup_response = agent.run(input=question)
+            ans, src = followup_response.split("Sources:", 1)            
+            # Display the follow-up response
+            st.markdown(ans)
+            st.markdown("Sources:\n" + sources)
 
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.messages.append({"role": "assistant", "content": initial_response})
+
+
