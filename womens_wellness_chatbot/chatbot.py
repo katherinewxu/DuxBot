@@ -17,9 +17,9 @@ brave_search_key = st.secrets["BRAVE_SEARCH_API_KEY"]
 
 # Initialize ChatOpenAI
 llm = ChatOpenAI(
-    model_name="gpt-4-32k-0314",
+    model_name="gpt-4-turbo",
     openai_api_key=openai_key,
-    max_tokens=8192
+    max_tokens=4096
 )
 
 # Initialize ChatOpenAI with JSON mode for structured responses
@@ -223,23 +223,15 @@ if prompt := st.chat_input("What would you like to know about women's health and
 
     # Call the agent with the correct input structure
     initial_response = agent.run(input=prompt)
-    followup_questions = generate_followup_questions(initial_response)
 
-    # Split the response into summary and sources
-    summary, sources = initial_response.split("Sources:", 1)
-    with st.chat_message("assistant"):
-        st.markdown(summary.strip())
-        st.markdown("Sources:\n" + sources)
-
-        for i, question in enumerate(followup_questions, 1):
-            st.markdown(question)
-            
-            # Call the agent to get the response
-            followup_response = agent.run(input=question)
-            ans, src = followup_response.split("Sources:", 1)            
-            # Display the follow-up response
-            st.markdown(ans)
-            st.markdown("Sources:\n" + sources)
+    if "Sources:" in initial_response:
+        # Split the response into summary and sources
+        summary, sources = initial_response.split("Sources:", 1)
+        with st.chat_message("assistant"):
+            st.markdown(summary.strip())
+            st.markdown("Sources:\n" + sources) 
+    else:
+        st.chat_message("assistant").markdown(initial_response)
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": initial_response})
