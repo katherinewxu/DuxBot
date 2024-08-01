@@ -33,8 +33,7 @@ def main():
     # Add feedback button
     st.sidebar.markdown("### We value your feedback!")
     feedback_url = "https://docs.google.com/forms/d/e/1FAIpQLSfZfHX0wwALRs87mRERfsDLiFIgpXkVuxLOCThZIci-H6L5qg/viewform?usp=sf_link"  # Replace with your actual Google Forms URL
-    if st.sidebar.button("Provide Feedback"):
-        st.sidebar.markdown(f"[Open Feedback Form]({feedback_url})")
+    st.sidebar.markdown(f"[Provide Feedback]({feedback_url})")
 
 def handle_user_input(prompt, chatbot):
     # Display user message in chat message container
