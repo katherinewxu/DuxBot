@@ -30,9 +30,16 @@ def main():
     if prompt := st.chat_input("What would you like to know about women's health and wellness?"):
         handle_user_input(prompt, chatbot)
 
+    # Add feedback button
+    st.sidebar.markdown("### We value your feedback!")
+    feedback_url = "https://docs.google.com/forms/d/e/1FAIpQLSfZfHX0wwALRs87mRERfsDLiFIgpXkVuxLOCThZIci-H6L5qg/viewform?usp=sf_link"  # Replace with your actual Google Forms URL
+    if st.sidebar.button("Provide Feedback"):
+        st.sidebar.markdown(f"[Open Feedback Form]({feedback_url})")
+
 def handle_user_input(prompt, chatbot):
     # Display user message in chat message container
     st.chat_message("user").markdown(prompt)
+
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
